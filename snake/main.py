@@ -1,15 +1,21 @@
 from tkinter import *
 from tkinter import ttk
 
+import random
+
 snake_direction = "Down"
 snake_parts = []
 
+window = Tk()
+
+screen_height = window.winfo_screenheight()
+screen_width = window.winfo_screenwidth()
+
+tamanho_bloco = 20 
+colunas = int(screen_width / tamanho_bloco)
+linhas = int(screen_height / tamanho_bloco)
 
 def draw_canvas():
-   tamanho_bloco = 20 
-   colunas = int(screen_width / tamanho_bloco)
-   linhas = int(screen_height / tamanho_bloco)
-
    for linha in range(linhas):
       for coluna in range(colunas):
         x1 = coluna * tamanho_bloco  
@@ -19,8 +25,13 @@ def draw_canvas():
         canvas.create_rectangle(x1, y1, x2 , y2, outline="white")
 
 def create_food(): 
- pass
+   col = random.randint(0, colunas - 1)
+   row = random.randint(0, linhas - 1)
 
+   x = col * 20
+   y = row * 20
+   food = canvas.create_oval(x, y, x+20, y+20, fill='red')
+   return food
 
 def change_snake_direction(event):
    global snake_direction
@@ -34,8 +45,8 @@ def change_snake_direction(event):
    if(event.keysym == 'Right'):
      snake_direction = "Right"
      
-
 def move_snake(): 
+   global food
    head_coords = canvas.coords(snake_parts[0])
    x1, y1, x2, y2 = head_coords
 
@@ -58,7 +69,8 @@ def move_snake():
 
    food_coords = canvas.coords(food)
    if head_coords[0] == food_coords[0] and head_coords[1] == food_coords[1]:
-      create_food()
+     canvas.delete(food) 
+     food = create_food()
    else:
       tail = snake_parts.pop()
       canvas.delete(tail)
@@ -66,14 +78,11 @@ def move_snake():
 
    window.after(100, move_snake)
 
-     
-
-window = Tk()
+   
 window.title("Snake game")
 window.resizable(False, False)
 
-screen_height = window.winfo_screenheight()
-screen_width = window.winfo_screenwidth()
+
 window.geometry(f"{screen_width}x{screen_height}")
 
 canvas = Canvas(window, width=screen_width, height=screen_height , background='gray75')    
@@ -81,7 +90,8 @@ canvas = Canvas(window, width=screen_width, height=screen_height , background='g
 snake = canvas.create_rectangle(20, 20, 40, 40, fill='blue')
 snake_parts.append(snake)
 
-food = canvas.create_oval(40, 40, 60, 60, fill='red')
+food = create_food()
+
 
 window.bind("<Key>" , change_snake_direction)
 
