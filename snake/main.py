@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 
+snake_direction = "Down"
+
 def draw_canvas():
    tamanho_bloco = 20 
    colunas = int(screen_width / tamanho_bloco)
@@ -14,15 +16,32 @@ def draw_canvas():
         y2 = y1 + tamanho_bloco
         canvas.create_rectangle(x1, y1, x2 , y2, outline="white")
 
+
 def change_snake_direction(event):
-      if(event.keysym == 'Up'):
-         canvas.move(snake , 0 , -20)
-      if(event.keysym == 'Down'):
-         canvas.move(snake , 0 , +20)
-      if(event.keysym == 'Left'):
-         canvas.move(snake , -20, 0 )
-      if(event.keysym == 'Right'):
-         canvas.move(snake ,+20, 0)
+   global snake_direction
+
+   if(event.keysym == 'Up'):
+       snake_direction = "Up"
+   if(event.keysym == 'Down'):
+     snake_direction = "Down"
+   if(event.keysym == 'Left'):
+     snake_direction = "Left"
+   if(event.keysym == 'Right'):
+     snake_direction = "Right"
+     
+
+def move_snake(): 
+   if(snake_direction == "Up"):      
+      canvas.move(snake , 0 , -20)
+   elif(snake_direction == "Down"):
+      canvas.move(snake , 0 , +20)
+   elif(snake_direction == "Left"):
+      canvas.move(snake , -20, 0 )
+   elif( snake_direction == "Right"):
+     canvas.move(snake ,+20, 0)
+   
+   window.after(100, move_snake)
+
      
 
 window = Tk()
@@ -41,5 +60,6 @@ canvas.create_oval(40, 40, 60, 60, fill='red')
 window.bind("<Key>" , change_snake_direction)
 
 draw_canvas()
+move_snake()
 canvas.pack()
 window.mainloop()
